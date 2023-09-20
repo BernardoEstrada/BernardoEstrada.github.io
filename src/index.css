@@ -34,3 +34,7 @@
 .rounded-animated:hover {
   @apply rounded-badge rounded-se-none rounded-es-none;
 }
+
+.h-3\/2 {
+  height: 150vh;
+}

@@ -1,4 +1,4 @@
-{
+ {
   "name": "bernardoestrada",
   "private": true,
   "version": "0.0.0",
@@ -41,6 +41,7 @@
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
     "react-particles": "^2.12.2",
+    "react-scroll-parallax": "^3.4.2",
     "react-type-animation": "^3.1.0",
     "tsparticles-slim": "^2.12.0",
     "use-prefers-color-scheme": "^1.1.3"
