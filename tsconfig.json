@@ -5,7 +5,6 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -20,7 +19,17 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@assets/*": ["./src/assets/*"],
+      "@global-assets": ["./src/assets"],
+      "@global-types": ["./src/types"],
+      "@data": ["./src/data"],
+      "@utils": ["./src/utils"],
+      "@components": ["./src/components"],
+      "@hooks": ["./src/hooks"],
+      "@contexts": ["./src/contexts"],
+      "@services": ["./src/services"],
+      "@theme": ["./src/theme"],
+      
+      "@portfolios/*": ["./src/portfolios/*"],
     }
   },
   "include": ["src", "custom.d.ts"],

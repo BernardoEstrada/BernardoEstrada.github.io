@@ -22,7 +22,7 @@ export const particleOptions: RecursivePartial<IOptions> = {
     },
   },
   particles: {
-    // reduceDuplicates: true,
+    reduceDuplicates: true,
     color: {
       value: "#ffffff",
     },

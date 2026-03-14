@@ -14,5 +14,26 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    // 'no-unused-vars': [
+    //   'error',
+    //   {
+    //     argsIgnorePattern: '^_',
+    //     varsIgnorePattern: '^_',
+    //     caughtErrorsIgnorePattern: '^_',
+    //     destructuredArrayIgnorePattern: '^_',
+    //     ignoreRestSiblings: true,
+    //   },
+    // ]
+    "@typescript-eslint/no-unused-vars": [
+      'error',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+      },
+    ],
+    "no-unused-vars": "off",
   },
 }
