@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
 @layer utilities {
   @variants responsive {
 
@@ -37,4 +43,57 @@
 
 .h-3\/2 {
   height: 150vh;
+}
+
+/* ------------------------------------------------------------------
+   DaisyUI custom theme extensions
+   These extra variables (radius, size, border, depth, noise, etc.)
+   let you reuse the same look & feel across sites, mirroring the
+   structure from the daisyUI theme docs.
+-------------------------------------------------------------------*/
+
+[data-theme="vsdark"],
+[data-theme="monokai"],
+[data-theme="nord"],
+[data-theme="terminal"],
+[data-theme="crt1990"],
+[data-theme="win95"],
+[data-theme="macclassic"] {
+  color-scheme: dark;
+
+  /* border radius */
+  --radius-selector: 0.9rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+
+  /* base sizes */
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+
+  /* border size */
+  --border: 1px;
+
+  /* effects */
+  --depth: 1;
+  --noise: 0;
+}
+
+[data-theme="githublight"] {
+  color-scheme: light;
+
+  /* border radius */
+  --radius-selector: 0.9rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+
+  /* base sizes */
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+
+  /* border size */
+  --border: 1px;
+
+  /* effects */
+  --depth: 1;
+  --noise: 0;
 }

@@ -1,4 +1,3 @@
-
 export const usedIcons = [
   "amazonwebservices",
   "angularjs",
@@ -97,7 +96,6 @@ export const usedIcons = [
   "blender",
 ];
 
-
 // const particleIcons: Record<typeof usedIcons[number], string> = {};
 
 // export const loadParticles = async () => {
@@ -134,16 +132,30 @@ export class ParticleImageManager {
     this.particles = await ParticleImageManager.importParticles();
   }
 
+  // Use Vite's import.meta.glob for dynamic SVG imports so that
+  // all icons are included in the build and work on static hosts.
   private static importParticles = async () => {
+    const svgModules = import.meta.glob("/src/portfolios/assets/icons/tech/*.svg", {
+      as: "raw",
+    });
+
     return Promise.all(
       usedIcons.map(async (icon) => {
-        const mod = await import(`../assets/icons/${icon}.svg?raw`);
+        const loader =
+          svgModules[`/src/portfolios/assets/icons/tech/${icon}.svg`] ??
+          svgModules[`/src/portfolios/assets/icons/tech/${icon}.SVG`];
+
+        if (!loader) {
+          throw new Error(`Icon not found for particle: ${icon}`);
+        }
+
+        const svg = (await loader()) as string;
         const img = new Image();
-        img.src = ParticleImageManager.svgPrefix + btoa(mod.default);
+        img.src = ParticleImageManager.svgPrefix + btoa(svg);
         return {
           name: icon,
           img,
-          originalSvg: mod.default,
+          originalSvg: svg,
         };
       }),
     );
