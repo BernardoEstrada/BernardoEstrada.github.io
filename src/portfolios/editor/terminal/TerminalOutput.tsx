@@ -37,7 +37,6 @@ export default function TerminalOutput({
   onDomainFilterChange,
   inline = false,
 }: TerminalOutputProps) {
-  console.log("section", section);
   if (section === null) {
     if (inline) return <ErrorOutput command="" />;
     return <WelcomeOutput name={resume.basics?.name ?? ""} />;
@@ -76,6 +75,5 @@ export default function TerminalOutput({
   }
   if (section === "help") return <HelpOutput />;
   if (section === "ls") return <LsOutput />;
-  console.log("no section found", section);
   return <ErrorOutput />;
 }

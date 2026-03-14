@@ -108,7 +108,6 @@ function createInitialWindows(groupedSkills: Record<string, ReturnType<typeof ge
       const wX = x;
       return { ...w, x: wX, y: wY, width, height: customHeights[w.id] ?? height, z, isOpen };
     });
-    console.log(windows);
     return windows;
   }
   return [
