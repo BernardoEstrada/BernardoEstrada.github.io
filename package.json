@@ -15,6 +15,7 @@
   },
   "reactSnap": {
     "source": "dist",
+    "include": ["/", "/portfolio/editor", "/portfolio/os", "/portfolio/wip"],
     "minifyHtml": {
       "collapseWhitespace": true,
       "removeComments": true,
