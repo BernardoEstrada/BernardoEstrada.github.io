@@ -1,12 +1,16 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, lazy, Suspense } from "react";
 import type { MouseEvent, TouchEvent, CSSProperties } from "react";
 import { resume, getEnrichedSkills } from "@portfolios/data/resume";
 import DesktopWindowFrame, { MIN_HEIGHT, MIN_WIDTH, OsTheme, ResizeSide } from "./DesktopWindow";
-import { Profile, Skills, Experience, Contact } from "./windowContent";
 import { useIsMobile } from "@hooks";
 import headshot from "@assets/headshot.jpg";
 import profileIcon from "@assets/icons/os/win/profile.png";
 import React from "react";
+
+const LazyProfile = lazy(() => import("./windowContent/Profile"));
+const LazySkills = lazy(() => import("./windowContent/Skills"));
+const LazyExperience = lazy(() => import("./windowContent/Experience"));
+const LazyContact = lazy(() => import("./windowContent/Contact"));
 
 export type WindowId = "profile" | "skills" | "experience" | "contact" | "headshot";
 
@@ -63,35 +67,19 @@ interface DesktopWindow {
   isOpen: boolean;
   width: number;
   height: number;
-  component: React.ReactElement;
 }
 
-function createInitialWindows(groupedSkills: Record<string, ReturnType<typeof getEnrichedSkills>>): DesktopWindow[] {
+function createInitialWindows(): DesktopWindow[] {
   const defaultOpenWindows: WindowId[] = ["profile", "skills", "experience", "contact"];
   const isMobile = typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT;
 
   const baseWindow: Pick<DesktopWindow, "isOpen"> = { isOpen: false };
-  const baseWindows: Pick<DesktopWindow, "id" | "title" | "component" | "isOpen">[] = [
-    { id: "profile", title: "Bernardo - Profile", component: <Profile resume={resume} />, ...baseWindow },
-    {
-      id: "skills",
-      title: "Skills - Map",
-      component: <Skills resume={resume} groupedSkills={groupedSkills} />,
-      ...baseWindow,
-    },
-    {
-      id: "experience",
-      title: "Experience - Timeline",
-      component: <Experience resume={resume} />,
-      ...baseWindow,
-    },
-    { id: "contact", title: "Contact - Links", component: <Contact resume={resume} />, ...baseWindow },
-    {
-      id: "headshot",
-      title: "Headshot",
-      component: <img src={headshot} alt="Headshot" className="max-w-full max-h-full object-contain" />,
-      ...baseWindow,
-    },
+  const baseWindows: Pick<DesktopWindow, "id" | "title" | "isOpen">[] = [
+    { id: "profile", title: "Bernardo - Profile", ...baseWindow },
+    { id: "skills", title: "Skills - Map", ...baseWindow },
+    { id: "experience", title: "Experience - Timeline", ...baseWindow },
+    { id: "contact", title: "Contact - Links", ...baseWindow },
+    { id: "headshot", title: "Headshot", ...baseWindow },
   ];
 
   if (isMobile) {
@@ -111,61 +99,11 @@ function createInitialWindows(groupedSkills: Record<string, ReturnType<typeof ge
     return windows;
   }
   return [
-    {
-      id: "profile",
-      title: "Bernardo - Profile",
-      x: 80,
-      y: 80,
-      z: 1,
-      isOpen: true,
-      width: 420,
-      height: 260,
-      component: <Profile resume={resume} />,
-    },
-    {
-      id: "skills",
-      title: "Skills - Map",
-      x: 260,
-      y: 120,
-      z: 2,
-      isOpen: true,
-      width: 460,
-      height: 320,
-      component: <Skills resume={resume} groupedSkills={groupedSkills} />,
-    },
-    {
-      id: "experience",
-      title: "Experience - Timeline",
-      x: 140,
-      y: 240,
-      z: 0,
-      isOpen: false,
-      width: 480,
-      height: 280,
-      component: <Experience resume={resume} />,
-    },
-    {
-      id: "contact",
-      title: "Contact - Links",
-      x: 260,
-      y: 260,
-      z: 0,
-      isOpen: false,
-      width: 360,
-      height: 200,
-      component: <Contact resume={resume} />,
-    },
-    {
-      id: "headshot",
-      title: "Headshot",
-      x: 260,
-      y: 260,
-      z: 0,
-      isOpen: false,
-      width: 360,
-      height: 200,
-      component: <img src={headshot} alt="Headshot" />,
-    },
+    { id: "profile", title: "Bernardo - Profile", x: 80, y: 80, z: 1, isOpen: true, width: 420, height: 260 },
+    { id: "skills", title: "Skills - Map", x: 260, y: 120, z: 2, isOpen: true, width: 460, height: 320 },
+    { id: "experience", title: "Experience - Timeline", x: 140, y: 240, z: 0, isOpen: false, width: 480, height: 280 },
+    { id: "contact", title: "Contact - Links", x: 260, y: 260, z: 0, isOpen: false, width: 360, height: 200 },
+    { id: "headshot", title: "Headshot", x: 260, y: 260, z: 0, isOpen: false, width: 360, height: 200 },
   ];
 }
 
@@ -189,7 +127,40 @@ export default function DesktopLayout({ initialOsTheme = "macclassic", onOsChang
     {} as Record<string, ReturnType<typeof getEnrichedSkills>>,
   );
 
-  const [windows, setWindows] = useState<DesktopWindow[]>(() => createInitialWindows(groupedSkills));
+  const getWindowContent = (id: WindowId): React.ReactNode => {
+    switch (id) {
+      case "profile":
+        return (
+          <Suspense fallback={null}>
+            <LazyProfile resume={resume} />
+          </Suspense>
+        );
+      case "skills":
+        return (
+          <Suspense fallback={null}>
+            <LazySkills resume={resume} groupedSkills={groupedSkills} />
+          </Suspense>
+        );
+      case "experience":
+        return (
+          <Suspense fallback={null}>
+            <LazyExperience resume={resume} />
+          </Suspense>
+        );
+      case "contact":
+        return (
+          <Suspense fallback={null}>
+            <LazyContact resume={resume} />
+          </Suspense>
+        );
+      case "headshot":
+        return <img src={headshot} alt="Headshot" className="max-w-full max-h-full object-contain" />;
+      default:
+        return null;
+    }
+  };
+
+  const [windows, setWindows] = useState<DesktopWindow[]>(() => createInitialWindows());
   const [dragging, setDragging] = useState<{
     id: WindowId;
     offsetX: number;
@@ -522,7 +493,7 @@ export default function DesktopLayout({ initialOsTheme = "macclassic", onOsChang
                 }}
                 onClose={() => closeWindow(w.id)}
               >
-                {w.component}
+                {getWindowContent(w.id)}
               </DesktopWindowFrame>
             );
           })}

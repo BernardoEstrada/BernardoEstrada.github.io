@@ -1,15 +1,17 @@
+import React, { lazy, Suspense } from "react";
 import type { Section } from "./constants";
 import type { SkillType, SkillSource, SkillDomain } from "@portfolios/types/resume";
 import type { ResumeSchema } from "@portfolios/types/resume";
 import type { EnrichedSkill } from "@portfolios/types/resume";
-import WelcomeOutput from "./text/WelcomeOutput";
-import AboutOutput from "./text/AboutOutput";
-import ExperienceOutput from "./text/ExperienceOutput";
-import SkillsOutput from "./text/SkillsOutput";
-import ContactOutput from "./text/ContactOutput";
-import HelpOutput from "./text/HelpOutput";
-import LsOutput from "./text/LsOutput";
-import ErrorOutput from "./text/ErrorOutput";
+
+const WelcomeOutput = lazy(() => import("./text/WelcomeOutput"));
+const AboutOutput = lazy(() => import("./text/AboutOutput"));
+const ExperienceOutput = lazy(() => import("./text/ExperienceOutput"));
+const SkillsOutput = lazy(() => import("./text/SkillsOutput"));
+const ContactOutput = lazy(() => import("./text/ContactOutput"));
+const HelpOutput = lazy(() => import("./text/HelpOutput"));
+const LsOutput = lazy(() => import("./text/LsOutput"));
+const ErrorOutput = lazy(() => import("./text/ErrorOutput"));
 
 interface TerminalOutputProps {
   section: Section;
@@ -37,27 +39,29 @@ export default function TerminalOutput({
   onDomainFilterChange,
   inline = false,
 }: TerminalOutputProps) {
+  const wrap = (node: React.ReactNode) => <Suspense fallback={null}>{node}</Suspense>;
+
   if (section === null) {
-    if (inline) return <ErrorOutput command="" />;
-    return <WelcomeOutput name={resume.basics?.name ?? ""} />;
+    if (inline) return wrap(<ErrorOutput command="" />);
+    return wrap(<WelcomeOutput name={resume.basics?.name ?? ""} />);
   }
   const noCmd = inline;
   if (section === "about") {
-    return (
+    return wrap(
       <AboutOutput
         name={resume.basics?.name}
         label={resume.basics?.label}
         headline={resume.basics?.headline}
         summary={resume.basics?.summary}
         showCommand={!noCmd}
-      />
+      />,
     );
   }
   if (section === "experience") {
-    return <ExperienceOutput jobs={resume.work ?? []} showCommand={!noCmd} />;
+    return wrap(<ExperienceOutput jobs={resume.work ?? []} showCommand={!noCmd} />);
   }
   if (section === "skills") {
-    return (
+    return wrap(
       <SkillsOutput
         typeFilter={typeFilter}
         sourceFilter={sourceFilter}
@@ -67,13 +71,15 @@ export default function TerminalOutput({
         onDomainFilterChange={onDomainFilterChange}
         skills={filteredSkills}
         showCommand={!noCmd}
-      />
+      />,
     );
   }
   if (section === "contact") {
-    return <ContactOutput email={resume.basics?.email} profiles={resume.basics?.profiles} showCommand={!noCmd} />;
+    return wrap(
+      <ContactOutput email={resume.basics?.email} profiles={resume.basics?.profiles} showCommand={!noCmd} />,
+    );
   }
-  if (section === "help") return <HelpOutput />;
-  if (section === "ls") return <LsOutput />;
-  return <ErrorOutput />;
+  if (section === "help") return wrap(<HelpOutput />);
+  if (section === "ls") return wrap(<LsOutput />);
+  return wrap(<ErrorOutput />);
 }

@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { resume, getEnrichedSkills } from "../../data/resume";
 import type { SkillType, SkillSource, SkillDomain } from "../../types/resume";
 import type { Section } from "./constants";
 import { COMMANDS } from "./constants";
 import { runCommand, getSuggestions } from "./commands";
-import CommandSidebar from "./CommandSidebar";
-import CommandDrawer from "./CommandDrawer";
-import CommandsMenuButton from "./CommandsMenuButton";
-import TerminalWindow from "./TerminalWindow";
+
+const CommandSidebar = lazy(() => import("./CommandSidebar"));
+const CommandDrawer = lazy(() => import("./CommandDrawer"));
+const CommandsMenuButton = lazy(() => import("./CommandsMenuButton"));
+const TerminalWindow = lazy(() => import("./TerminalWindow"));
 
 export default function TerminalLayout() {
   const [log, setLog] = useState<{ command: string; section: Section }[]>([]);
@@ -50,15 +51,22 @@ export default function TerminalLayout() {
 
   return (
     <div className="flex h-full min-h-0 bg-base-100 font-mono text-sm">
-      <CommandSidebar section={currentSection} onSelect={handleSelectSection} />
-      <CommandDrawer
-        open={menuOpen}
-        onClose={() => setMenuOpen(false)}
-        section={currentSection}
-        onSelect={handleSelectSection}
-      />
-      <CommandsMenuButton onClick={() => setMenuOpen(true)} />
-      <TerminalWindow
+      <Suspense fallback={null}>
+        <CommandSidebar section={currentSection} onSelect={handleSelectSection} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <CommandDrawer
+          open={menuOpen}
+          onClose={() => setMenuOpen(false)}
+          section={currentSection}
+          onSelect={handleSelectSection}
+        />
+      </Suspense>
+      <Suspense fallback={null}>
+        <CommandsMenuButton onClick={() => setMenuOpen(true)} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <TerminalWindow
         log={log}
         currentSection={currentSection}
         resume={resume}
@@ -75,6 +83,7 @@ export default function TerminalLayout() {
         suggestions={suggestions}
         history={history}
       />
+      </Suspense>
     </div>
   );
 }

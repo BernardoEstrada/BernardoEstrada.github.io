@@ -1,5 +1,6 @@
-import { useState } from "react";
-import TerminalLayout from "./terminal/TerminalLayout";
+import { useState, lazy, Suspense } from "react";
+
+const TerminalLayout = lazy(() => import("./terminal/TerminalLayout"));
 
 const THEMES = ["vsdark", "monokai", "nord", "githublight", "terminal"] as const;
 type ThemeId = (typeof THEMES)[number];
@@ -36,7 +37,9 @@ export default function EditorPortfolio() {
       </header>
 
       <div className="min-h-0 flex-1">
-        <TerminalLayout />
+        <Suspense fallback={null}>
+          <TerminalLayout />
+        </Suspense>
       </div>
     </div>
   );

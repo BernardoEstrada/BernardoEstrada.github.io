@@ -1,13 +1,15 @@
-import { useState } from "react";
-import { DEFAULT_DARK, getThemeColors, Themefy } from "@theme";
+import { useState, lazy, Suspense } from "react";
+import { DEFAULT_DARK, getThemeColors } from "@theme";
 import { resume } from "@portfolios/data/resume";
-import BubbleChart from "./components/BubbleChart";
-import NavBar from "./components/NavBar";
-import Landing from "./components/Landing";
 import { Helmet } from "react-helmet";
 import { ParallaxProvider } from "react-scroll-parallax";
-import AboutCard from "./components/AboutCard";
-import WIPCard from "./components/WIP.card";
+
+const Themefy = lazy(() => import("../../theme/Themefy").then((m) => ({ default: m.default })));
+const NavBar = lazy(() => import("./components/NavBar"));
+const Landing = lazy(() => import("./components/Landing"));
+const WIPCard = lazy(() => import("./components/WIP.card"));
+const AboutCard = lazy(() => import("./components/AboutCard"));
+const BubbleChart = lazy(() => import("./components/BubbleChart"));
 
 export default function App() {
   const [theme, setTheme] = useState(DEFAULT_DARK);
@@ -15,24 +17,33 @@ export default function App() {
 
   return (
     <>
-      <Themefy theme={theme} />
+      <Suspense fallback={null}>
+        <Themefy theme={theme} />
+      </Suspense>
       <Helmet>
         <title>{resume.basics.name}</title>
         <meta name="description" content={resume.basics.headline} />
         <meta name="theme-color" content={colors.b1} />
       </Helmet>
-      <NavBar theme={theme} setTheme={setTheme} setColors={setColors} />
+      <Suspense fallback={null}>
+        <NavBar theme={theme} setTheme={setTheme} setColors={setColors} />
+      </Suspense>
 
       <ParallaxProvider>
-        <Landing resume={resume} />
+        <Suspense fallback={null}>
+          <Landing resume={resume} />
+        </Suspense>
         <div className="min-h-screen flex flex-col justify-center items-center w-full px-4 sm:px-6 py-12">
-          <WIPCard />
+          <Suspense fallback={null}>
+            <WIPCard />
+          </Suspense>
         </div>
         {false && (
           <div>
-            {/* todo */}
-            <AboutCard resume={resume} />
-            <BubbleChart themeColors={colors} />
+            <Suspense fallback={null}>
+              <AboutCard resume={resume} />
+              <BubbleChart themeColors={colors} />
+            </Suspense>
           </div>
         )}
       </ParallaxProvider>

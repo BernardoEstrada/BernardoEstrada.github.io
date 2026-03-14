@@ -1,11 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, lazy, Suspense } from "react";
 import type { Section } from "./constants";
 import type { SkillType, SkillSource, SkillDomain, ResumeSchema, EnrichedSkill } from "@portfolios/types/resume";
-import TerminalTitleBar from "./TerminalTitleBar";
 import TerminalOutput from "./TerminalOutput";
-import TerminalPrompt from "./TerminalPrompt";
-import WelcomeOutput from "./text/WelcomeOutput";
-import SkillsScriptView from "./SkillsScriptView";
+
+const TerminalTitleBar = lazy(() => import("./TerminalTitleBar"));
+const TerminalPrompt = lazy(() => import("./TerminalPrompt"));
+const WelcomeOutput = lazy(() => import("./text/WelcomeOutput"));
+const SkillsScriptView = lazy(() => import("./SkillsScriptView"));
 
 interface LogEntry {
   command: string;
@@ -60,7 +61,9 @@ export default function TerminalWindow({
   return (
     <div className="flex min-h-0 flex-1 flex-col min-w-0 p-4 md:p-6">
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-base-300 bg-base-200 shadow-xl">
-        <TerminalTitleBar />
+        <Suspense fallback={null}>
+          <TerminalTitleBar />
+        </Suspense>
 
         <div
           ref={scrollRef}
@@ -68,18 +71,22 @@ export default function TerminalWindow({
         >
           {isSkillsHijack ? (
             <div className="flex min-h-0 flex-1 flex-col">
-              <SkillsScriptView
-                typeFilter={typeFilter}
-                sourceFilter={sourceFilter}
-                domainFilter={domainFilter}
-                onTypeFilterChange={onTypeFilterChange}
-                onSourceFilterChange={onSourceFilterChange}
-                onDomainFilterChange={onDomainFilterChange}
-                skills={filteredSkills}
-              />
+              <Suspense fallback={null}>
+                <SkillsScriptView
+                  typeFilter={typeFilter}
+                  sourceFilter={sourceFilter}
+                  domainFilter={domainFilter}
+                  onTypeFilterChange={onTypeFilterChange}
+                  onSourceFilterChange={onSourceFilterChange}
+                  onDomainFilterChange={onDomainFilterChange}
+                  skills={filteredSkills}
+                />
+              </Suspense>
             </div>
           ) : log.length === 0 ? (
-            <WelcomeOutput name={resume.basics?.name ?? ""} />
+            <Suspense fallback={null}>
+              <WelcomeOutput name={resume.basics?.name ?? ""} />
+            </Suspense>
           ) : (
             <div className="space-y-4">
               {log.map((entry, i) => (
@@ -106,13 +113,15 @@ export default function TerminalWindow({
         </div>
 
         <div className="flex-shrink-0">
-          <TerminalPrompt
-            value={cmd}
-            onChange={onCmdChange}
-            onRun={onRunCmd}
-            suggestions={suggestions}
-            history={history}
-          />
+          <Suspense fallback={null}>
+            <TerminalPrompt
+              value={cmd}
+              onChange={onCmdChange}
+              onRun={onRunCmd}
+              suggestions={suggestions}
+              history={history}
+            />
+          </Suspense>
         </div>
       </div>
     </div>
