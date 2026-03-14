@@ -7,6 +7,7 @@ import Landing from "./components/Landing";
 import { Helmet } from "react-helmet";
 import { ParallaxProvider } from "react-scroll-parallax";
 import AboutCard from "./components/AboutCard";
+import WIPCard from "./components/WIP.card";
 
 export default function App() {
   const [theme, setTheme] = useState(DEFAULT_DARK);
@@ -24,10 +25,13 @@ export default function App() {
 
       <ParallaxProvider>
         <Landing resume={resume} />
-        <AboutCard resume={resume} />
+        <div className="min-h-screen flex flex-col justify-center items-center w-full px-4 sm:px-6 py-12">
+          <WIPCard />
+        </div>
         {false && (
           <div>
             {/* todo */}
+            <AboutCard resume={resume} />
             <BubbleChart themeColors={colors} />
           </div>
         )}
